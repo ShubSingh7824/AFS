@@ -1,0 +1,40 @@
+$SubID = '<Sub ID>'
+
+New-Afs default -Location tallinn -Name 'Default'
+
+az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/$SubID"
+
+$GitBasePath = 'C:\Users\shubham\OneDrive\AFS\GIT\RandomStuff\TerraformwithAzure'
+
+Set-Location $GitBasePath\IntroBasicDeclarative
+
+terraform fmt 
+terraform init
+terraform plan
+terraform apply -auto-approve
+
+terraform show
+
+terraform state list
+terraform state show azurerm_storage_account.StorAccount1
+terraform state show azurerm_storage_container.Container1
+
+terraform plan -var 'replicationType=GRS'
+terraform apply -var 'replicationType=GRS' -auto-approve
+
+terraform graph > base.dot
+terraform graph | dot -Tsvg > graph.svg
+
+terraform refresh
+
+Set-Location $GitBasePath\SecretOnly
+$env:TF_VAR_KV="/subscriptions/$SubID/resourceGroups/RG-SCUSA/providers/Microsoft.KeyVault/vaults/SavillVault"
+
+terraform init
+terraform plan
+terraform apply
+
+terraform plan -destroy -out='planout'   #Is there a file type to use? .tfplan??
+terraform apply 'planout'
+
+terraform destroy
